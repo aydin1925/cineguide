@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // kullanıcının seçtiği türler
   final List<int> _selectedGenreIds = [];
 
-  // yüklenme döngüsü (görüntü olan) görünsün mü
+  // yüklenme (görüntü olan) görünsün mü
   bool _isLoading = false;
 
   // Seçim yapma mantığı
@@ -65,15 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
       }).eq('id', userId);
 
       if(mounted) {
-        // Başarılı mesajı ver
         _showCustomSnackBar("Harika! Sinema dünyasına giriş yapılıyor... 🎬");
         
-        // Kullanıcının mesajı okuması için 1 saniye bekle
         await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
-          // --- KRİTİK EKLEME 2: YÖNLENDİRME KOMUTU ---
-          // pushReplacement: Geri dönülemeyecek şekilde sayfayı değiştirir.
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MoviesScreen()),
@@ -136,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       body: Column(
         children: [
-          // Bilgilendirme için yazı
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
@@ -145,7 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Türlerin olduğu Izgara
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16.0),
@@ -164,14 +158,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 final String name = _genres.values.elementAt(index);
                 final bool isSelected = _selectedGenreIds.contains(id);
 
-                // Tıklanabilir kutu oluşturma
                 return InkWell(
                   onTap: () => _toggleGenre(id),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      // tür seçildiyse sarı, seçilmediyse koyu gri olacak
                       color: isSelected ? Colors.amber : const Color(0xFF1E1E1E),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(

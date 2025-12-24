@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase eklendi
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/tmdb_services.dart';
 import '../models/movie.dart';
 import 'login_screen.dart';
 import 'detail_screen.dart';
 import 'dart:async';
+import 'profile_screen.dart';
 
 class MoviesScreen extends StatefulWidget {
   const MoviesScreen({super.key});
@@ -33,7 +34,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
   @override
   void dispose() {
-    // Sayfa kapanırken timer ve controller'ı temizliyoruz
+    // timer'i sıfırlayan kod
     timer?.cancel();
     _searchText.dispose();
     super.dispose();
@@ -74,14 +75,12 @@ class _MoviesScreenState extends State<MoviesScreen> {
     }
   }
 
-  // Arama Mantığı (Yeni Eklendi)
+  // arama fonksiyonu
   void _onSearchChanged(String query) {
-    // Eğer önceki sayaç çalışıyorsa iptal et
     if (timer?.isActive ?? false) timer!.cancel();
 
-    // Yeni sayaç başlat (500ms bekle)
     timer = Timer(const Duration(milliseconds: 500), () async {
-      // Eğer kutu boşsa arama modundan çık
+      // arama barı boşsa arama modunu kapat
       if (query.isEmpty) {
         setState(() {
           _isSearching = false;
@@ -90,17 +89,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
         return;
       }
 
-      // Arama yükleniyor efekti
+      // yükleniyor efekti
       setState(() => _isLoading = true);
 
       try {
         TmdbService service = TmdbService();
-        final results = await service.searchMovies(query); // Servisteki fonksiyonu çağır
+        final results = await service.searchMovies(query);
         
         if (mounted) {
           setState(() {
             searchResults = results;
-            _isSearching = true; // Arama modunu aç
+            _isSearching = true; 
             _isLoading = false;
           });
         }
@@ -133,23 +132,35 @@ class _MoviesScreenState extends State<MoviesScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            onPressed: _signOut, 
-            icon: const Icon(Icons.logout, color: Colors.white70),
-            tooltip: "Çıkış Yap",
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                );
+              },
+              icon: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.amber.withOpacity(0.8), width: 1.5), // İnce sarı halka
+                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 20),
+              ),
+              tooltip: "Profilim",
+            ),
           ),
         ],
       ),
-      // Body yapısı değişti: Column içinde Arama Barı + İçerik
       body: Column(
         children: [
-          
-          // --- 1. ARAMA ÇUBUĞU ---
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchText,
-              onChanged: _onSearchChanged, // Yazdıkça yukarıdaki fonksiyon çalışacak
+              onChanged: _onSearchChanged, // yazı yazıldıkça bu fonksiyonu tetikleyecek
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: "Film ara",
@@ -277,7 +288,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // 3. SATIR: GENEL POPÜLER
+                            // popüler filmleri göster
                             _buildSectionTitle("Herkes Bunları İzliyor 🌍"),
                              SizedBox(
                               height: 200,

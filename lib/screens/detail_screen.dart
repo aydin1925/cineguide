@@ -33,7 +33,7 @@ class _DetailScreenState extends State<DetailScreen> {
       if (mounted) {
         setState(() {
           _isAddedToList = data != null; 
-          _isLoading = false; // Yükleme bitti, butonu açabiliriz
+          _isLoading = false;
         });
       }
     }
@@ -53,7 +53,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
     try {
       if (_isAddedToList == true) {
-        // --- INSERT (EKLEME) ---
         await Supabase.instance.client.from('watchlists').insert({
           'user_id': userId,
           'movie_id': movieId,
@@ -202,7 +201,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     style: const TextStyle(color: Colors.grey, fontSize: 16, height: 1.5),
                   ),
                   
-                  const SizedBox(height: 50), // En altta biraz boşluk kalsın
+                  const SizedBox(height: 50),
                 ],
               ),
             ),

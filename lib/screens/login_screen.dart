@@ -2,7 +2,7 @@ import 'package:cineguide/screens/register_screen.dart';
 import 'package:cineguide/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home_screen.dart'; // Başarılı olursa buraya gideceğiz
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     setState(() {
-      _isLoading = true; // yükleme buttonu dönmesi için
+      _isLoading = true;
     });
 
     try {
@@ -40,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     on AuthException catch (e) {
-      // 4. Supabase'den özel bir hata geldiyse (Yanlış şifre vb.)
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -50,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      // 5. Beklenmedik başka bir hata (İnternet yok vb.)
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -60,7 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } finally {
-      // 6. Her şey bitince (Başarılı veya Hatalı) Yükleniyor modunu kapat
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -82,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // --- LOGO KISMI ---
               const Icon(Icons.movie_filter_outlined, size: 100, color: Colors.amber),
               const SizedBox(height: 20),
               const Text(
@@ -91,12 +87,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // Beyaz Yazı
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 40),
 
-              // --- E-POSTA KUTUSU ---
+              // eposta input
               TextField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -104,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
 
-              // --- ŞİFRE KUTUSU ---
+              // şifre inputu
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -113,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 30),
 
-              // --- GİRİŞ BUTONU ---
+              // giriş yap buttonu
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
@@ -129,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
               
               const SizedBox(height: 20),
               
-              // --- KAYIT OL LİNKİ ---
+              // kayıt formu linki
               TextButton(
                 onPressed: () {
                   Navigator.push(

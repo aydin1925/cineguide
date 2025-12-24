@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home_screen.dart'; // Başarılı olursa buraya gideceğiz
+import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // Şifreler gizli mi?
   bool _isPasswordHidden = true;
 
-  // --- 2. KAYIT MANTIĞI ---
+  // kayıt işlemini yapan fonksiyon
   Future<void> _register() async {
     
     final email = _emailController.text.trim();
@@ -43,31 +43,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    // B) Supabase İşlemleri
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // 1. Kullanıcıyı oluştur (Auth Tablosuna ekle)
       final AuthResponse res = await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
       );
 
-      // 2. Eğer Auth kaydı başarılıysa, Profil Tablosuna ekle
+
       if (res.user != null) {
         await Supabase.instance.client.from('profiles').insert({
-          'id': res.user!.id, // Auth ID'si ile eşleştiriyoruz
+          'id': res.user!.id, 
           'username': username,
-          'favorite_genres': [], // Henüz tür seçmedi, boş liste
+          'favorite_genres': [], 
         });
 
-        // 3. Başarılı! İçeri al.
         if (mounted) {
           _showMessage("Kayıt Başarılı! Hoş geldin.", isError: false);
           
-          // Ana sayfaya gönder ve geri dönemesin
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -76,13 +72,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       }
     } on AuthException catch (e) {
-      // Supabase hatası (Örn: Bu mail zaten kayıtlı)
       _showMessage(e.message);
     } catch (e) {
-      // Genel hata
       _showMessage("Beklenmedik bir hata oluştu: $e");
     } finally {
-      // Yükleniyor animasyonunu kapat
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -91,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // Mesaj Gösterme Yardımcısı (SnackBar)
+  // Mesaj Gösterme Yardımcısı
   void _showMessage(String message, {bool isError = true}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -104,7 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Kömür Siyahı Arka Plan
+      backgroundColor: const Color(0xFF121212),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -130,19 +123,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 30),
 
-              // --- INPUTLAR ---
+              // email inputu
               _buildTextField(
                   controller: _emailController,
                   label: "Email",
                   icon: Icons.email_outlined),
               const SizedBox(height: 16),
               
+              // username inputu
               _buildTextField(
                   controller: _usernameController,
                   label: "Username",
                   icon: Icons.person_outline),
               const SizedBox(height: 16),
               
+              // password inputu
               _buildTextField(
                   controller: _passwordController,
                   label: "Password",
@@ -150,6 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   isPassword: true),
               const SizedBox(height: 16),
               
+              // şifre doğrula inputu
               _buildTextField(
                   controller: _confirmPasswordController,
                   label: "Confirm Password",
@@ -157,7 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   isPassword: true),
               const SizedBox(height: 30),
 
-              // --- KAYIT BUTONU ---
+              // kayıt ol buttonu
               ElevatedButton(
                 onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
@@ -180,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               const SizedBox(height: 20),
 
-              // --- GİRİŞE DÖN ---
+              // giriş linki
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
