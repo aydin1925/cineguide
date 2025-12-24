@@ -27,4 +27,65 @@ class TmdbService {
       throw Exception('Filmler alınamadı: ${response.statusCode}');
     }
   }
+
+  // Kullanıcının seçtiği türlere göre filmleri al
+  Future<List<Movie>> getMoviesByGenres(List<int> genreIds) async {
+
+    // Seçilen türlerin herhangi birine göre filmleri getir
+    final genreString = genreIds.join('|');
+
+    final url = Uri.parse('$_baseUrl/discover/movie?api_key=$_apiKey&language=tr-TR&sort_by=popularity.desc&with_genres=$genreString');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> results = data['results'];
+      return results.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      throw Exception('Önerilen filmler alınamadı');
+    }
+  }
+  
+  // 3. GÜNLÜK TRENDLERİ GETİR (Günün Önerileri İçin) - YENİ
+  Future<List<Movie>> getTrendingMovies() async {
+    final url = Uri.parse('$_baseUrl/trending/movie/day?api_key=$_apiKey&language=tr-TR');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> results = data['results'];
+      return results.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      throw Exception('Trendler alınamadı');
+    }
+  }
+
+  // 4. VİZYONA GİRECEKLERİ GETİR (İzleme Listesi Dolgu Malzemesi) - YENİ
+  Future<List<Movie>> getUpcomingMovies() async {
+    final url = Uri.parse('$_baseUrl/movie/upcoming?api_key=$_apiKey&language=tr-TR');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> results = data['results'];
+      return results.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      throw Exception('Gelecek filmler alınamadı');
+    }
+  }
+
+  Future<List<Movie>> searchMovies(String query) async {
+    final url = Uri.parse('$_baseUrl/search/movie?api_key=$_apiKey&language=tr-TR&query=$query&include_adult=false');
+    final response = await http.get(url);
+
+    if(response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List results = data['results'];
+      return results.map((e) => Movie.fromJson(e)).toList();
+    }
+    else {
+      throw Exception('Arama Yapılamadı!');
+    }
+  }
 }
