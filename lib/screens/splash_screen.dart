@@ -50,7 +50,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
 
     } catch (e) {
-      print("❌ DEDEKTİF HATASI: Bir şeyler ters gitti!");
       print("HATA DETAYI: $e");
       _navigateTo(const LoginScreen());
     }
@@ -66,7 +65,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  // --- GÖRÜNTÜ KISMI ---
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

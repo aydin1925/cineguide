@@ -362,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildMenuTile(
                       icon: Icons.notifications_active_rounded,
                       title: "Bildirim Ayarları",
-                      trailing: Switch(value: true, onChanged: (val) {}, activeColor: Colors.amber),
+                      trailing: Switch(value: true, onChanged: (val) {}, activeThumbColor: Colors.amber),
                       onTap: () {},
                     ),
 

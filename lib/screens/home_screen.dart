@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../services/tmdb_services.dart';
-import '../models/movie.dart';
 import 'movies_screen.dart';
 
 class HomeScreen extends StatefulWidget {

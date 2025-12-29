@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/tmdb_services.dart';
 import '../models/movie.dart';
-import 'login_screen.dart';
 import 'detail_screen.dart';
 import 'dart:async';
 import 'profile_screen.dart';
@@ -110,17 +109,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
     });
   }
 
-  // Çıkış fonksiyonum
-  Future<void> _signOut() async {
-    await Supabase.instance.client.auth.signOut();
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,11 +123,16 @@ class _MoviesScreenState extends State<MoviesScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: IconButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
+
+                setState(() {
+                  _isLoading = true;
+                });
+                _loadData();
               },
               icon: Container(
                 padding: const EdgeInsets.all(4),
@@ -268,20 +261,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
                                     scrollDirection: Axis.horizontal,
                                     itemCount: watchlist.length,
                                     itemBuilder: (context, index) {
-                                       final item = watchlist[index];
-                                       
-                                       // veriyi Movie Objesine çevir
-                                       final movie = Movie(
-                                         id: item['movie_id'],
-                                         title: item['movie_title'],
-                                         posterPath: item['poster_path'],
-                                         overview: "", 
-                                         releaseDate: "", 
-                                         avgRating: 0.0,
+                                      final item = watchlist[index];
+
+                                      final simpleMovie = Movie(
+                                        id: item['movie_id'],
+                                        title: item['movie_title'],
+                                        posterPath: item['poster_path'],
+                                        overview: "",
+                                        releaseDate: "",
+                                        avgRating: 0.0,
                                        );
 
-                                       return _buildSmallMovieCard(movie);
-                                    },
+                                       return _buildWatchlistCard(simpleMovie); 
+                                      },
                                   ),
                                 );
                               }, 
@@ -372,6 +364,66 @@ class _MoviesScreenState extends State<MoviesScreen> {
             ),
             const SizedBox(height: 5),
             Text(movie.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white70, fontSize: 12))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWatchlistCard(Movie simpleMovie) {
+    return InkWell(
+      onTap: () async {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.amber)),
+        );
+
+        try {
+          TmdbService service = TmdbService();
+          Movie fullMovie = await service.getMovieDetail(simpleMovie.id);
+
+          if (mounted) Navigator.pop(context);
+
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DetailScreen(movie: fullMovie)),
+            );
+          }
+        } catch (e) {
+          if (mounted) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Film detayları alınamadı. İnternetini kontrol et.")),
+            );
+          }
+        }
+      },
+      child: Container(
+        width: 120,
+        margin: const EdgeInsets.only(left: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(simpleMovie.fullPosterUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              simpleMovie.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            )
           ],
         ),
       ),

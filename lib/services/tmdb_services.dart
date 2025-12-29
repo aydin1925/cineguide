@@ -47,7 +47,7 @@ class TmdbService {
     }
   }
   
-  // 3. GÜNLÜK TRENDLERİ GETİR (Günün Önerileri İçin) - YENİ
+  
   Future<List<Movie>> getTrendingMovies() async {
     final url = Uri.parse('$_baseUrl/trending/movie/day?api_key=$_apiKey&language=tr-TR');
     final response = await http.get(url);
@@ -61,7 +61,7 @@ class TmdbService {
     }
   }
 
-  // 4. VİZYONA GİRECEKLERİ GETİR (İzleme Listesi Dolgu Malzemesi) - YENİ
+  
   Future<List<Movie>> getUpcomingMovies() async {
     final url = Uri.parse('$_baseUrl/movie/upcoming?api_key=$_apiKey&language=tr-TR');
     final response = await http.get(url);
@@ -86,6 +86,20 @@ class TmdbService {
     }
     else {
       throw Exception('Arama Yapılamadı!');
+    }
+  }
+
+  Future<Movie> getMovieDetail(int movieId) async {
+    final url = Uri.parse('$_baseUrl/movie/$movieId?api_key=$_apiKey&language=tr-TR');
+    
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      
+      return Movie.fromJson(data);
+    } else {
+      throw Exception('Film detayları getirilemedi: ${response.statusCode}');
     }
   }
 }
