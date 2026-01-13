@@ -116,4 +116,4 @@ Uygulamanın ticari sürüme geçişi ve bir sosyal platforma dönüşmesi için
 Bu proje **Aydın ŞAHİN** tarafından geliştirilmektedir.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/aydinsahin1925)
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/aydin1925)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/aydin1925) 
